@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabaseClient'
 import HomeScreen from './screens/HomeScreen'
 import WeatherScreen from './screens/WeatherScreen'
 import MarketPriceScreen from './screens/MarketPriceScreen'
@@ -11,12 +12,32 @@ import LoginScreen from './screens/LoginScreen'
 import SignupScreen from './screens/SignupScreen'
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState('home')
+  const [currentScreen, setCurrentScreen] = useState('login')
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Check auth on mount
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data?.user || null)
+      setLoading(false)
+    })
+
+    // Listen for auth changes
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null)
+    })
+    return () => {
+      listener?.subscription.unsubscribe()
+    }
+  }, [])
 
   const renderScreen = () => {
     switch (currentScreen) {
       case 'home':
         return <HomeScreen onNavigate={setCurrentScreen} />
+      case 'home1':
+        return <HomeScreen1 onNavigate={setCurrentScreen} />
       case 'weather':
         return <WeatherScreen onNavigate={setCurrentScreen} />
       case 'market':
@@ -32,21 +53,55 @@ export default function App() {
       case 'signup':
         return <SignupScreen onNavigate={setCurrentScreen} />
       default:
-        return <HomeScreen onNavigate={setCurrentScreen} />
+        return <HomeScreen1 onNavigate={setCurrentScreen} />
     }
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span>Loading...</span>
+      </div>
+    )
+  }
+
+  // If not logged in, show only login/signup screens
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="max-w-md w-full">
+          {currentScreen === 'signup' ? (
+            <SignupScreen onNavigate={setCurrentScreen} />
+          ) : (
+            <LoginScreen onNavigate={setCurrentScreen} />
+          )}
+          <div className="flex justify-center mt-4">
+            <button
+              className="text-green-700 font-bold underline"
+              onClick={() =>
+                setCurrentScreen(currentScreen === 'signup' ? 'login' : 'signup')
+              }
+            >
+              {currentScreen === 'signup'
+                ? 'Already have an account? Login'
+                : "Don't have an account? Sign Up"}
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // If logged in, show the app
   return (
     <div className="min-h-screen">
       {/* Desktop Layout */}
       <div className="hidden lg:flex">
-        {/* Desktop Sidebar Navigation */}
         <nav className="desktop-sidebar">
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-farm-green-800 mb-2">🌱 Plantix</h1>
             <p className="text-sm text-gray-600">Digital Farming Companion</p>
           </div>
-          
           <div className="space-y-2">
             {[
               { id: 'home', icon: '🏠', label: 'Home', labelHi: 'होम' },
@@ -72,22 +127,30 @@ export default function App() {
                 </div>
               </button>
             ))}
+            <button
+              onClick={async () => {
+                await supabase.auth.signOut()
+                setCurrentScreen('login')
+              }}
+              className="w-full flex items-center gap-3 p-3 rounded-lg text-left text-red-600 hover:bg-red-50 mt-4"
+            >
+              <span className="text-xl">🚪</span>
+              <div>
+                <div className="font-medium">Logout</div>
+                <div className="text-xs text-gray-500">लॉगआउट</div>
+              </div>
+            </button>
           </div>
         </nav>
-        
-        {/* Desktop Main Content */}
         <main className="desktop-main p-8">
           {renderScreen()}
         </main>
       </div>
-      
       {/* Mobile Layout */}
       <div className="lg:hidden">
-        <div className="pb-20"> {/* Padding for bottom navigation */}
+        <div className="pb-20">
           {renderScreen()}
         </div>
-        
-        {/* Mobile Bottom Navigation */}
         <nav className="bottom-nav">
           {[
             { id: 'home', icon: '🏠', label: 'Home', labelHi: 'होम' },
@@ -107,6 +170,17 @@ export default function App() {
               <span className="text-[10px] opacity-80">{item.labelHi}</span>
             </button>
           ))}
+          <button
+            onClick={async () => {
+              await supabase.auth.signOut()
+              setCurrentScreen('login')
+            }}
+            className="bottom-nav-item text-red-600"
+          >
+            <span className="text-xl mb-1">🚪</span>
+            <span className="text-xs">Logout</span>
+            <span className="text-[10px] opacity-80">लॉगआउट</span>
+          </button>
         </nav>
       </div>
     </div>

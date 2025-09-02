@@ -205,3 +205,6 @@ For support and queries:
 ---
 
 **Built with ❤️ for Indian Farmers** 🇮🇳
+
+NEXT_PUBLIC_SUPABASE_URL=https://cgiqqoyglahliouzwgqo.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNnaXFxb3lnbGFobGlvdXp3Z3FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MjA5NTUsImV4cCI6MjA3MjM5Njk1NX0.ak0AroW1PrNeal8nZQYPkmiGDFVv79jVI4y8uW8hiqw
