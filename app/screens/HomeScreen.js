@@ -3,20 +3,35 @@ import { useState } from 'react'
 
 export default function HomeScreen({ onNavigate }) {
   const [language, setLanguage] = useState('english')
+  const [farmStats, setFarmStats] = useState(null)
+  const [form, setForm] = useState({ crops: '', acres: '', health: '' })
+  const [saving, setSaving] = useState(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
-  
+
   const toggleLanguage = () => {
     setLanguage(prev => prev === 'english' ? 'hindi' : 'english')
   }
+
+  const handleChange = e => {
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  const handleSubmit = e => {
+    e.preventDefault()
+    setSaving(true)
+    setTimeout(() => {
+      setFarmStats({
+        crops: Number(form.crops),
+        acres: Number(form.acres),
+        health: Number(form.health)
+      })
+      setSaving(false)
+      setForm({ crops: '', acres: '', health: '' })
+    }, 500)
+  }
+
   return (
-    <div className="min-h-screen p-4 md:p-6 lg:p-8 pb-24 lg:pb-8 relative"> {/* Responsive padding */}
-      {/* Background Blur Overlay for Login Modal */}
-      {showLoginModal && (
-        <div 
-          className="fixed inset-0 bg-black/30 backdrop-blur-md z-[9998] animate-fadeInUp"
-          onClick={() => setShowLoginModal(false)}
-        />
-      )}
+    <div className="min-h-screen p-4 md:p-6 lg:p-8 pb-24 lg:pb-8 relative">
       {/* Top Navigation Bar */}
       <nav className="flex items-center justify-between mb-8 animate-fadeInUp">
         <div className="flex items-center">
@@ -27,7 +42,6 @@ export default function HomeScreen({ onNavigate }) {
             {language === 'english' ? 'Crop Intel' : 'क्रॉप इंटेल'}
           </h1>
         </div>
-        
         <div className="flex items-center space-x-3">
           {/* Language Toggle */}
           <button
@@ -39,7 +53,6 @@ export default function HomeScreen({ onNavigate }) {
               {language === 'english' ? 'हिं' : 'EN'}
             </span>
           </button>
-          
           {/* Profile Menu */}
           <div className="relative">
             <button
@@ -51,7 +64,6 @@ export default function HomeScreen({ onNavigate }) {
                 {language === 'english' ? 'Profile' : 'प्रोफाइल'}
               </span>
             </button>
-            
           </div>
         </div>
       </nav>
@@ -89,170 +101,47 @@ export default function HomeScreen({ onNavigate }) {
         </div>
       </header>
 
-      {/* Main Tiles with Enhanced Animations */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 gap-6 mb-8">
-        <button
-          onClick={() => onNavigate('weather')}
-          className="group card hover:scale-105 transition-all duration-300 animate-slideInLeft animate-delay-100"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              <div className="bg-gradient-to-r from-blue-500 to-sky-600 rounded-2xl p-4 mr-4 shadow-lg animate-bounceIn animate-delay-200">
-                <CloudRain className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-black text-gray-900">
-                  {language === 'english' ? 'Weather Forecast' : 'मौसम पूर्वानुमान'}
-                </h3>
-                <p className="text-gray-600 font-semibold animate-fadeInUp animate-delay-300">
-                  {language === 'english' ? 'Live Weather Updates' : 'लाइव मौसम अपडेट'}
-                </p>
-              </div>
-            </div>
-            <div className="text-right animate-scaleIn animate-delay-400">
-              <p className="text-3xl font-black text-blue-600">28°C</p>
-              <p className="text-gray-500 text-sm">Partly Cloudy</p>
-            </div>
-          </div>
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-sky-50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <p className="relative text-gray-700 font-medium animate-fadeInUp animate-delay-500">
-              {language === 'english' 
-                ? 'Perfect weather for farming activities today. Light winds expected.'
-                : 'आज खेती के कामों के लिए मौसम अच्छा है। हल्की हवा की उम्मीद है।'
-              }
-            </p>
-            <div className="mt-4 flex items-center space-x-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-              <span className="text-xs text-gray-500 font-medium">
-                {language === 'english' ? 'Live Updates' : 'लाइव अपडेट'}
-              </span>
-            </div>
-          </div>
-        </button>
-
-        <button
-          onClick={() => onNavigate('market')}
-          className="group card hover:scale-105 transition-all duration-300 animate-slideInRight animate-delay-200"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              <div className="bg-gradient-to-r from-orange-500 to-amber-600 rounded-2xl p-4 mr-4 shadow-lg animate-bounceIn animate-delay-300">
-                <TrendingUp className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-black text-gray-900">
-                  {language === 'english' ? 'Market Prices' : 'बाजार भाव'}
-                </h3>
-                <p className="text-gray-600 font-semibold animate-fadeInUp animate-delay-400">
-                  {language === 'english' ? 'Live Market Rates' : 'लाइव बाजार दरें'}
-                </p>
-              </div>
-            </div>
-            <div className="text-right animate-scaleIn animate-delay-500">
-              <p className="text-lg font-bold text-green-600">↗ +3%</p>
-              <p className="text-gray-500 text-sm">Soybean</p>
-            </div>
-          </div>
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <p className="relative text-gray-700 font-medium animate-fadeInUp animate-delay-600">
-              {language === 'english'
-                ? 'Soybean prices up 3% this week. Best rates in Amravati market.'
-                : 'इस सप्ताह सोयाबीन की कीमतों में 3% की वृद्धि। अमरावती बाजार में सबसे अच्छी दरें।'
-              }
-            </p>
-            <div className="mt-4 flex items-center space-x-2">
-              <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-              <span className="text-xs text-gray-500 font-medium">
-                {language === 'english' ? 'Real-time Data' : 'रियल-टाइम डेटा'}
-              </span>
-            </div>
-          </div>
-        </button>
-
-        <button
-          onClick={() => onNavigate('crop')}
-          className="group card hover:scale-105 transition-all duration-300 animate-slideInLeft animate-delay-300"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-4 mr-4 shadow-lg animate-bounceIn animate-delay-400">
-                <Sprout className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-black text-gray-900">
-                  {language === 'english' ? 'Crop Advisory' : 'फसल सलाह'}
-                </h3>
-                <p className="text-gray-600 font-semibold animate-fadeInUp animate-delay-500">
-                  {language === 'english' ? 'Expert Guidance' : 'विशेषज्ञ मार्गदर्शन'}
-                </p>
-              </div>
-            </div>
-            <div className="text-right animate-scaleIn animate-delay-600">
-              <div className="bg-green-100 px-3 py-1 rounded-full">
-                <p className="text-sm font-bold text-green-700">
-                  {language === 'english' ? 'AI Powered' : 'AI संचालित'}
-                </p>
-              </div>
-              <p className="text-gray-500 text-sm mt-1">
-                {language === 'english' ? 'Personalized' : 'व्यक्तिगत'}
-              </p>
-            </div>
-          </div>
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <p className="relative text-gray-700 font-medium animate-fadeInUp animate-delay-700">
-              {language === 'english'
-                ? 'Get personalized crop recommendations based on your soil and climate.'
-                : 'अपनी मिट्टी और जलवायु के आधार पर व्यक्तिगत फसल सिफारिशें प्राप्त करें।'
-              }
-            </p>
-            <div className="mt-4 flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-xs text-gray-500 font-medium">
-                {language === 'english' ? 'Smart Recommendations' : 'स्मार्ट सिफारिशें'}
-              </span>
-            </div>
-          </div>
-        </button>
-      </div>
-
-      {/* Premium Quick Access Buttons */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-2 gap-6 animate-slideInRight animate-delay-400">
-        <button
-          onClick={() => onNavigate('pest')}
-          className="group btn-outline flex flex-col items-center justify-center gap-4 py-8 relative overflow-hidden animate-bounceIn animate-delay-500"
-        >
-          <div className="bg-red-100 p-4 rounded-2xl group-hover:bg-red-200 transition-colors duration-300">
-            <Camera className="w-8 h-8 text-red-600 group-hover:scale-110 transition-transform duration-300" />
-          </div>
-          <div className="text-center">
-            <span className="font-bold text-lg text-gray-900 block">
-              {language === 'english' ? 'Pest Detection' : 'कीट पहचान'}
-            </span>
-            <span className="text-sm text-gray-600 animate-fadeInUp animate-delay-600">
-              {language === 'english' ? 'AI Diagnosis' : 'AI निदान'}
-            </span>
-          </div>
-        </button>
-        
-        <button
-          onClick={() => onNavigate('voice')}
-          className="group btn-primary flex flex-col items-center justify-center gap-4 py-8 relative overflow-hidden animate-bounceIn animate-delay-600"
-        >
-          <div className="bg-white/20 p-4 rounded-2xl">
-            <Mic className="w-8 h-8 text-white group-hover:scale-110 transition-transform duration-300" />
-          </div>
-          <div className="text-center">
-            <span className="font-bold text-lg block">
-              {language === 'english' ? 'Voice Assistant' : 'आवाज़ सहायक'}
-            </span>
-            <span className="text-sm opacity-90 animate-fadeInUp animate-delay-700">
-              {language === 'english' ? 'Ask Questions' : 'प्रश्न पूछें'}
-            </span>
-          </div>
-        </button>
+      {/* Farm Stats Input Section */}
+      <div className="max-w-xl mx-auto mb-10 bg-white/90 rounded-2xl p-6 border border-green-100 shadow">
+        <h2 className="text-xl font-bold mb-4 text-green-700">Add/Update Your Farm Stats</h2>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input
+            type="number"
+            name="crops"
+            value={form.crops}
+            onChange={handleChange}
+            placeholder="Number of Crops"
+            className="px-4 py-2 rounded border"
+            required
+          />
+          <input
+            type="number"
+            name="acres"
+            value={form.acres}
+            onChange={handleChange}
+            placeholder="Farm Acres"
+            className="px-4 py-2 rounded border"
+            required
+          />
+          <input
+            type="number"
+            name="health"
+            value={form.health}
+            onChange={handleChange}
+            placeholder="Crop Health (%)"
+            min="0"
+            max="100"
+            className="px-4 py-2 rounded border"
+            required
+          />
+          <button
+            type="submit"
+            className="col-span-1 md:col-span-3 bg-green-600 text-white px-4 py-2 rounded font-bold mt-2"
+            disabled={saving}
+          >
+            {saving ? 'Saving...' : 'Save Stats'}
+          </button>
+        </form>
       </div>
 
       {/* Premium Farm Stats Section */}
@@ -266,41 +155,47 @@ export default function HomeScreen({ onNavigate }) {
               {language === 'english' ? 'Farm Statistics & Health' : 'खेत के आंकड़े और स्वास्थ्य'}
             </p>
           </div>
-          <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-3 gap-8 text-center">
-            <div className="group animate-bounceIn animate-delay-600">
-              <div className="bg-green-100 p-6 rounded-2xl mb-4 group-hover:bg-green-200 transition-colors duration-300">
-                <div className="text-4xl font-black text-green-600 group-hover:scale-110 transition-transform duration-300">12</div>
+          {farmStats ? (
+            <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-3 gap-8 text-center">
+              <div className="group animate-bounceIn animate-delay-600">
+                <div className="bg-green-100 p-6 rounded-2xl mb-4 group-hover:bg-green-200 transition-colors duration-300">
+                  <div className="text-4xl font-black text-green-600 group-hover:scale-110 transition-transform duration-300">{farmStats.crops}</div>
+                </div>
+                <div className="text-lg font-bold text-gray-900 animate-fadeInUp animate-delay-700">
+                  {language === 'english' ? 'Crops' : 'फसलें'}
+                </div>
+                <div className="text-sm text-gray-600 animate-fadeInUp animate-delay-800">
+                  {language === 'english' ? 'Total Varieties' : 'कुल किस्में'}
+                </div>
               </div>
-              <div className="text-lg font-bold text-gray-900 animate-fadeInUp animate-delay-700">
-                {language === 'english' ? 'Crops' : 'फसलें'}
+              <div className="group animate-bounceIn animate-delay-700">
+                <div className="bg-orange-100 p-6 rounded-2xl mb-4 group-hover:bg-orange-200 transition-colors duration-300">
+                  <div className="text-4xl font-black text-orange-600 group-hover:scale-110 transition-transform duration-300">{farmStats.acres}</div>
+                </div>
+                <div className="text-lg font-bold text-gray-900 animate-fadeInUp animate-delay-800">
+                  {language === 'english' ? 'Acres' : 'एकड़'}
+                </div>
+                <div className="text-sm text-gray-600 animate-fadeInUp animate-delay-800">
+                  {language === 'english' ? 'Farm Area' : 'खेत का क्षेत्र'}
+                </div>
               </div>
-              <div className="text-sm text-gray-600 animate-fadeInUp animate-delay-800">
-                {language === 'english' ? 'Total Varieties' : 'कुल किस्में'}
+              <div className="group animate-bounceIn animate-delay-800">
+                <div className="bg-blue-100 p-6 rounded-2xl mb-4 group-hover:bg-blue-200 transition-colors duration-300">
+                  <div className="text-4xl font-black text-blue-600 group-hover:scale-110 transition-transform duration-300">{farmStats.health}%</div>
+                </div>
+                <div className="text-lg font-bold text-gray-900 animate-fadeInUp animate-delay-800">
+                  {language === 'english' ? 'Healthy' : 'स्वस्थ'}
+                </div>
+                <div className="text-sm text-gray-600 animate-fadeInUp animate-delay-800">
+                  {language === 'english' ? 'Crop Health' : 'फसल स्वास्थ्य'}
+                </div>
               </div>
             </div>
-            <div className="group animate-bounceIn animate-delay-700">
-              <div className="bg-orange-100 p-6 rounded-2xl mb-4 group-hover:bg-orange-200 transition-colors duration-300">
-                <div className="text-4xl font-black text-orange-600 group-hover:scale-110 transition-transform duration-300">5</div>
-              </div>
-              <div className="text-lg font-bold text-gray-900 animate-fadeInUp animate-delay-800">
-                {language === 'english' ? 'Acres' : 'एकड़'}
-              </div>
-              <div className="text-sm text-gray-600 animate-fadeInUp animate-delay-800">
-                {language === 'english' ? 'Farm Area' : 'खेत का क्षेत्र'}
-              </div>
+          ) : (
+            <div className="text-center text-gray-500 py-8">
+              No farm stats found. Please add your farm details above.
             </div>
-            <div className="group animate-bounceIn animate-delay-800">
-              <div className="bg-blue-100 p-6 rounded-2xl mb-4 group-hover:bg-blue-200 transition-colors duration-300">
-                <div className="text-4xl font-black text-blue-600 group-hover:scale-110 transition-transform duration-300">95%</div>
-              </div>
-              <div className="text-lg font-bold text-gray-900 animate-fadeInUp animate-delay-800">
-                {language === 'english' ? 'Healthy' : 'स्वस्थ'}
-              </div>
-              <div className="text-sm text-gray-600 animate-fadeInUp animate-delay-800">
-                {language === 'english' ? 'Crop Health' : 'फसल स्वास्थ्य'}
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -319,7 +214,6 @@ export default function HomeScreen({ onNavigate }) {
                 {language === 'english' ? 'Please login to access your profile' : 'अपनी प्रोफाइल एक्सेस करने के लिए लॉगिन करें'}
               </p>
             </div>
-            
             <div className="space-y-3">
               <button
                 onClick={() => {
@@ -331,7 +225,6 @@ export default function HomeScreen({ onNavigate }) {
                 <LogIn className="w-5 h-5 mr-2" />
                 {language === 'english' ? 'Login' : 'लॉगिन'}
               </button>
-              
               <button
                 onClick={() => {
                   setShowLoginModal(false)
@@ -342,7 +235,6 @@ export default function HomeScreen({ onNavigate }) {
                 <UserPlus className="w-5 h-5 mr-2" />
                 {language === 'english' ? 'Create Account' : 'खाता बनाएं'}
               </button>
-              
               <button
                 onClick={() => setShowLoginModal(false)}
                 className="w-full text-gray-500 py-2 text-sm hover:text-gray-700 transition-colors"
