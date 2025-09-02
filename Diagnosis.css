@@ -1,0 +1,91 @@
+{
+  "name": "Diagnosis",
+  "type": "object",
+  "properties": {
+    "plant_name": {
+      "type": "string",
+      "description": "Name of the plant being diagnosed"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "URL of the uploaded plant image"
+    },
+    "disease_identified": {
+      "type": "string",
+      "description": "Name of the identified disease"
+    },
+    "confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "AI confidence in the diagnosis (0-100%)"
+    },
+    "symptoms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Observed symptoms"
+    },
+    "causes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Possible causes of the disease"
+    },
+    "treatment_recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "urgency": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        }
+      }
+    },
+    "prevention_tips": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tips to prevent future occurrences"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "monitoring",
+        "resolved"
+      ],
+      "default": "active",
+      "description": "Treatment status"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "mild",
+        "moderate",
+        "severe"
+      ],
+      "description": "Disease severity level"
+    }
+  },
+  "required": [
+    "plant_name",
+    "image_url",
+    "disease_identified"
+  ]
+}
